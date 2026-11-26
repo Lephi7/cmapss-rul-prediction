@@ -1,0 +1,16 @@
+# Lecture et traitement des données C-MAPSS
+numpy
+pandas
+
+# Prétraitement, modèles de régression et métriques
+scikit-learn
+
+# Graphiques et sauvegarde des modèles
+matplotlib
+joblib
+
+# Lecture de config.yaml
+PyYAML
+
+# Réseaux de neurones avec PyTorch
+torch
