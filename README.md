@@ -15,6 +15,10 @@ python -m pip install -r requirements.txt
 
 ## main.py
 
+![alt text](results/figures/visualisation_FD001.png)
+
+![alt text](results/figures/resultats_regression_lineaire.png)
+
 ## Regression lineaire
 
 1. load data
