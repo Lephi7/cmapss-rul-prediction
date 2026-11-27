@@ -15,8 +15,32 @@ python -m pip install -r requirements.txt
 
 ## main.py
 
-## Regression lineaire 
+## Regression lineaire
+
 1. load data
-2. pretraitement -> standardiser
-3. retirer capteurs constant
-4. ACP
+2. pretraitement -> standardiser (retirer capteurs constant)
+3. Regression lineaire
+    3.1 Reference
+    3.2 Plafonne a 125
+    3.3 MinMax
+    3.4 KBest
+    3.5 ACP 95%
+    3.6 ACP 95% + Blanchissement
+    3.7 Ridge
+4. Régression à vecteurs de soutien (SVR) avec noyau
+    4.1 SVR a noyau RBF
+        4.1.1 Reference
+        4.1.2 ACP 95%
+        4.1.3 ACP 95% + blanchissement
+    4.2 SVR a noyau linéaire
+        4.2.1 Reference
+        4.2.2 ACP 95%
+        4.2.3 ACP 95% + blanchissement
+    4.3 SVR a noyau polynomial
+        4.3.1 Reference
+        4.3.2 ACP 95%
+        4.3.3 ACP 95% + blanchissement
+    4.4 SVR a noyau sigmoide
+        4.4.1 Reference
+        4.4.2 ACP 95%
+        4.4.3 ACP 95% blanchissement

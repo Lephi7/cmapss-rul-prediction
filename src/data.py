@@ -46,7 +46,7 @@ def prepare_RUL(train):
     # Calculer les RUL d'entraînement et charger celles du test
     # Dernier cycle de chaque moteur, repeter sur chaque ligne (pour faire Last - actuel)
     last_cycle = (
-        train.groupby("engine_id")["cycle"].trasform("max") # groupby(...).transform("max") conserve une valeur max par ligne de #moteur pour effectuer la soustraction
+        train.groupby("engine_id")["cycle"].transform("max") # groupby(...).transform("max") conserve une valeur max par ligne de #moteur pour effectuer la soustraction
     )
 
     # Une cible pour chaque ligne d'entraînement

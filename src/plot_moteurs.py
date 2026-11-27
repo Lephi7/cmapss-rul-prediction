@@ -3,16 +3,13 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 CAPTEUR = "sensor_2"
 MOTEURS = (1, 2, 3)
-DESTINATION = (
-    Path(__file__).resolve().parents[1]
-    / "results"
-    / "figures"
-    / "visualisation_FD001.png"
-)
+FIG_DIR = Path(__file__).resolve().parents[1] / "results" / "figures"
+DESTINATION_EXEMPLE = FIG_DIR / "visualisation_FD001.png"
+DESTINATION_LINEAR = FIG_DIR / "resultats_regression_lineaire.png"
 
 
 def plot_moteurs(train, test, *, enregistrer=False):
@@ -70,20 +67,52 @@ def plot_moteurs(train, test, *, enregistrer=False):
         ax.tick_params(axis="both", labelsize=9, colors="#364960")
 
     if enregistrer:
-        DESTINATION.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(DESTINATION, dpi=160)
-        print(f"Graphique enregistré dans {DESTINATION}")
+        DESTINATION_EXEMPLE.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(DESTINATION_EXEMPLE, dpi=160)
+        print(f"Graphique enregistré dans {DESTINATION_EXEMPLE}")
 
     return fig
 
+def plot_resultats(tableau, titre="Régression linéaire", *, enregistrer=False):
+    x = np.arange(len(tableau))  # une position par variante
+    largeur = 0.38
 
-def main():
-    from src.data import load_data
+    fig, ax = plt.subplots(figsize=(11, 5.5), facecolor="white")
+    fig.subplots_adjust(left=0.08, right=0.97, top=0.80, bottom=0.25)
+    fig.text(
+        0.08, 0.92, f"{titre} · comparaison des variantes",
+        fontsize=18, fontweight="bold", color="#18243a",
+    )
+    fig.text(
+        0.08, 0.87, "NASA C-MAPSS FD001 · Erreur sur les 100 moteurs de test (en cycles)",
+        fontsize=11, color="#4b5e72",
+    )
 
-    train, test = load_data()
-    fig = plot_moteurs(train, test, enregistrer=True)
-    plt.close(fig)
+    b1 = ax.bar(x - largeur / 2, tableau["RMSE"], largeur, label="RMSE", color="#286087")
+    b2 = ax.bar(x + largeur / 2, tableau["MAE"], largeur, label="MAE", color="#00806e")
+    ax.bar_label(b1, fmt="%.1f", fontsize=8, color="#364960", padding=2)
+    ax.bar_label(b2, fmt="%.1f", fontsize=8, color="#364960", padding=2)
 
+    ax.set_xticks(x)
+    ax.set_xticklabels(tableau.index, rotation=25, ha="right")
+    ax.set_ylabel("Erreur (cycles)")
+    ax.set_ylim(bottom=0)
+    ax.legend(ncol=2, loc="upper right", frameon=False)
 
-if __name__ == "__main__":
-    main()
+    ax.set_axisbelow(True)
+    ax.grid(axis="y", color="#e0e7ef", linewidth=0.8)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.spines[["bottom", "left"]].set_color("#9aabba")
+    ax.tick_params(axis="both", labelsize=9, colors="#364960")
+
+    rmse_min = tableau["RMSE"].min()
+    ax.axhline(rmse_min, ls="--", lw=1, color="#9aabba", zorder=0)
+    ax.text(len(tableau) - 0.5, rmse_min, f"RMSE min = {rmse_min:.1f}",
+            ha="right", va="bottom", fontsize=8, color="#530000")
+
+    if enregistrer:
+        DESTINATION_LINEAR.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(DESTINATION_LINEAR, dpi=160)
+        print(f"Graphique enregistré dans {DESTINATION_LINEAR}")
+
+    return fig
