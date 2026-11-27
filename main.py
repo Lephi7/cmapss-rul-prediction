@@ -1,10 +1,10 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # noqa: I001
 import pandas as pd
 
 from src.data import load_data, prepare_RUL
 from src.evaluation import evaluate
 from src.models.linear import build_linear_model, build_ridge_model
-from src.plot_moteurs import plot_moteurs, plot_resultats
+from src.plot_moteurs import plot_moteurs, plot_resultats, plot_predictions
 from src.preprocessing import clip_rul
 
 VARIANTES = [
@@ -53,6 +53,12 @@ def main():
 
     # Plot les resultats
     plot_resultats(tableau, enregistrer=True)
+    plt.show()
+
+    # meilleure régression linéaire : RUL plafonnée
+    best_RL = build_linear_model()
+    best_RL.fit(train[features], clip_rul(y_train, 125))
+    plot_predictions(y_test, best_RL.predict(test_last[features]), enregistrer=True)
     plt.show()
 
 

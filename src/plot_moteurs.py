@@ -10,7 +10,7 @@ MOTEURS = (1, 2, 3)
 FIG_DIR = Path(__file__).resolve().parents[1] / "results" / "figures"
 DESTINATION_EXEMPLE = FIG_DIR / "visualisation_FD001.png"
 DESTINATION_LINEAR = FIG_DIR / "resultats_regression_lineaire.png"
-
+DESTINATION_PRED_RL = FIG_DIR / "predictions_regression_lineaire.png"
 
 def plot_moteurs(train, test, *, enregistrer=False):
     fig = plt.figure(figsize=(12, 7.5), facecolor="white")
@@ -115,4 +115,46 @@ def plot_resultats(tableau, titre="Régression linéaire", *, enregistrer=False)
         fig.savefig(DESTINATION_LINEAR, dpi=160)
         print(f"Graphique enregistré dans {DESTINATION_LINEAR}")
 
+    return fig
+
+def plot_predictions(y_vrai, y_pred, titre="Régression linéaire", *, enregistrer=False):
+    y_vrai = np.asarray(y_vrai).ravel()
+    y_pred = np.asarray(y_pred).ravel()
+    ordre = np.argsort(y_vrai)                     # moteurs triés par vraie RUL
+    lim = max(y_vrai.max(), y_pred.max()) * 1.05
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5), facecolor="white",
+                                   gridspec_kw={"width_ratios": (1, 1.6)})
+    fig.subplots_adjust(left=0.07, right=0.97, top=0.80, bottom=0.11, wspace=0.22)
+    fig.text(0.07, 0.92, f"{titre} · RUL prédite vs réelle",
+             fontsize=18, fontweight="bold", color="#18243a")
+    fig.text(0.07, 0.87, "NASA C-MAPSS FD001 · 100 moteurs de test (en cycles)",
+             fontsize=11, color="#4b5e72")
+
+    # gauche : nuage prédit vs vrai
+    ax1.scatter(y_vrai, y_pred, s=22, color="#286087", alpha=0.8)
+    ax1.plot([0, lim], [0, lim], ls="--", color="#9aabba", label="Prédiction parfaite")
+    ax1.set_xlim(0, lim); ax1.set_ylim(0, lim)
+    ax1.set_xlabel("RUL réelle"); ax1.set_ylabel("RUL prédite")
+    ax1.legend(frameon=False, loc="upper left")
+
+    # droite : chaque moteur, trié par RUL réelle
+    x = np.arange(len(y_vrai))
+    ax2.plot(x, y_vrai[ordre], color="#18243a", lw=1.6, label="RUL réelle")
+    ax2.scatter(x, y_pred[ordre], s=18, color="#00806e", label="RUL prédite")
+    ax2.vlines(x, y_vrai[ordre], y_pred[ordre], color="#00806e", alpha=0.3, lw=1)
+    ax2.set_xlabel("Moteurs de test (triés par RUL réelle)"); ax2.set_ylabel("RUL (cycles)")
+    ax2.legend(frameon=False, loc="upper left")
+
+    for ax in (ax1, ax2):
+        ax.set_axisbelow(True)
+        ax.grid(color="#e0e7ef", linewidth=0.8)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.spines[["bottom", "left"]].set_color("#9aabba")
+        ax.tick_params(labelsize=9, colors="#364960")
+
+    if enregistrer:
+        FIG_DIR.mkdir(parents=True, exist_ok=True)
+        fig.savefig(DESTINATION_PRED_RL, dpi=160)
+        print(f"Graphique enregistré dans {DESTINATION_PRED_RL}")
     return fig
